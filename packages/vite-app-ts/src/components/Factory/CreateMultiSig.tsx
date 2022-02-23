@@ -13,6 +13,7 @@ import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/m
 import IntegerStep from './IntegerStep';
 import { ethers } from 'ethers';
 import { InnerAppContext } from '~~/models/CustomContexts';
+import { getCurrentSigner } from '../common/currentSigner';
 
 const CreateMultiSig: FC = () => {
   const ethersContext: IEthersContext = useEthersContext();
@@ -101,7 +102,7 @@ const CreateMultiSig: FC = () => {
     setNumConfs(1);
   };
 
-  const handleSubmit = (): void => {
+  const handleSubmit = async (): Promise<void> => {
     try {
       const canGo = validateFields() && !!msFactory && !!numConfs && !!tx;
 
@@ -109,7 +110,9 @@ const CreateMultiSig: FC = () => {
         return;
       }
       setPendingCreate(true);
-      const transaction = msFactory.createMultiSigSafe(name, owners, numConfs);
+      // need to get signer as workaround for a bug in @web3-react after metamask account changes.
+      const sgn = await getCurrentSigner();
+      const transaction = msFactory.connect(sgn).createMultiSigSafe(name, owners, numConfs);
       setTxError(false);
       tx(transaction, (update) => {
         if (update && (update.error || update.reason)) {
@@ -129,6 +132,7 @@ const CreateMultiSig: FC = () => {
           setTxSent(false);
         }
       }).catch((err) => {
+        setPendingCreate(false);
         throw err;
       });
       setTxSent(true);
@@ -221,7 +225,7 @@ const CreateMultiSig: FC = () => {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {owners.map((owner, idx) => (
-              <div>
+              <div key={idx}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                   <div style={{ fontSize: labelFontSize, width: `${labelWidthRem}rem`, textAlign: 'right' }}>
                     {`Owner ${idx + 1}:`}
@@ -275,7 +279,7 @@ const CreateMultiSig: FC = () => {
               alignSelf: 'stretch',
               paddingLeft: `${labelWidthRem + 1}rem`,
             }}>
-            <IntegerStep mi={1} ma={owners.length} update={setNumConfs} sliderWidth={`13rem`} />
+            <IntegerStep mi={1} ma={owners.length} update={(v) => setNumConfs(+v)} sliderWidth={`13rem`} />
           </div>
         </div>
       </Modal>

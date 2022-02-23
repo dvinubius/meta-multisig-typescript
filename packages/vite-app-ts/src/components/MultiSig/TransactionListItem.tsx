@@ -32,13 +32,13 @@ const TransactionListItem: FC<ITransactionListItemProps> = function (props) {
 
   const isSelfOwner = !!userAddress && owners?.includes(userAddress);
 
-  console.log('SIGNATURES: ', props.transaction.signatures.length);
-
   return (
     <div>
       <div
         style={{
           width: '100%',
+          margin: 'auto',
+          maxWidth: props.expanded ? '100%' : '34rem',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'stretch',
@@ -46,12 +46,12 @@ const TransactionListItem: FC<ITransactionListItemProps> = function (props) {
           background: swapGradientSimple,
           borderRadius: '.25rem',
           padding: '1rem',
-
+          marginBottom: '1rem',
           // border: pinkAccentBorder,
           border: mediumBorder,
         }}
         className="MultiSigTxItem">
-        <MSTransactionOverview transaction={props.transaction} />
+        <MSTransactionOverview isParentExpanded={props.expanded} transaction={props.transaction} />
         {!props.transaction.executed && (
           <>
             {!props.expanded && (
@@ -85,7 +85,7 @@ const TransactionListItem: FC<ITransactionListItemProps> = function (props) {
           </>
         )}
       </div>
-      <Divider />
+      {/* <Divider /> */}
     </div>
   );
 };

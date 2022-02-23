@@ -1,35 +1,39 @@
-import { Descriptions, Spin } from 'antd';
-import React, { FC, useContext, useEffect, useState } from 'react';
-import { Address, Balance } from '~~/eth-components/ant';
-import { primaryColor } from '~~/styles/styles';
+import { Descriptions, Spin, Divider } from 'antd';
+import React, { FC, useContext, useState } from 'react';
+import { Address } from '~~/eth-components/ant';
+
 import { MSTransactionModel } from './models/ms-transaction.model';
 import { contentWrapperStyle, labelStyle } from './MSTransactionStyles';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
-import { remToPx } from '~~/helpers/layoutCalc';
-import TxData from '../Shared/TxData';
-import { InnerAppContext } from '~~/models/CustomContexts';
-import { DecodedCalldata } from './models/decoded-calldata.model';
+
 import { MsSafeContext } from './MultiSig';
 import { DecodedResult } from './DecodedResult';
+import { DownOutlined, UpOutlined } from '@ant-design/icons';
 
 export interface IMSTransactionOverviewProps {
   transaction: MSTransactionModel;
+  isParentExpanded: boolean;
 }
 
 const MSTransactionOverview: FC<IMSTransactionOverviewProps> = (props) => {
-  const { ethPrice } = useContext(InnerAppContext);
   const { multiSigSafe } = useContext(MsSafeContext);
   const scaffoldAppProviders = useScaffoldAppProviders();
   const blockExplorer = scaffoldAppProviders.targetNetwork.blockExplorer;
   const decodedCalldata = multiSigSafe.interface.parseTransaction({ data: props.transaction.calldata });
 
-  const detailsLeft = [
+  const [expanded, setExpanded] = useState(props.isParentExpanded);
+
+  const toggleExpansion = () => {
+    setExpanded((exp) => !exp);
+  };
+
+  const detailsTop = [
     {
-      label: 'Name',
-      content: <div>{props.transaction.txName}</div>,
+      label: 'Submitted',
+      content: <div className="mono-nice">{props.transaction.dateSubmitted?.toLocaleString()}</div>,
     },
     {
-      label: 'Creator',
+      label: 'By',
       content: (
         <Address
           address={props.transaction.creator}
@@ -39,88 +43,44 @@ const MSTransactionOverview: FC<IMSTransactionOverviewProps> = (props) => {
         />
       ),
     },
-    {
-      label: 'Submitted',
-      content: (
-        <div style={{}} className="mono-nice">
-          {props.transaction.dateSubmitted?.toLocaleString()}
-        </div>
-      ),
-    },
-  ];
-
-  const detailsRight = [
-    {
-      label: 'Recipient',
-      content: (
-        <Address
-          address={props.transaction.to}
-          ensProvider={scaffoldAppProviders.mainnetAdaptor?.provider}
-          blockExplorer={blockExplorer}
-          fontSize={16}
-        />
-      ),
-    },
-    {
-      label: 'Value',
-      content: (
-        <Balance
-          balance={props.transaction.amount}
-          etherMode
-          fontSize={remToPx(1)}
-          padding={0}
-          price={ethPrice}
-          customColor={primaryColor}
-        />
-      ),
-    },
-    {
-      label: 'Data',
-      content: <TxData data={props.transaction.calldata} fontSize="0.875rem" width="12rem" iconFontSize="1rem" />,
-    },
   ];
 
   return (
     <div
       style={{
         display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
+        flexDirection: 'column',
+        alignItems: 'stretch',
         gap: '1rem',
-        flexWrap: 'wrap',
       }}>
       <div
         style={{
           flex: '1',
           minWidth: '21rem',
+          display: 'flex',
+          gap: '1rem',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          padding: '0 0.5rem',
         }}>
-        <Descriptions bordered size="small" style={{ width: '100%' }}>
-          {detailsLeft.map((item) => (
-            <Descriptions.Item key={item.label} label={<span style={labelStyle}>{item.label}</span>} span={6}>
+        <div
+          style={{
+            flex: 1,
+            textAlign: 'center',
+            fontSize: '1.25rem',
+          }}>
+          {props.transaction.txName}
+        </div>
+
+        <Descriptions bordered size="small">
+          {detailsTop.map((item) => (
+            <Descriptions.Item key={item.label} label={<span style={labelStyle}>{item.label}</span>} span={4}>
               <div style={{ ...contentWrapperStyle }}>{item.content}</div>
             </Descriptions.Item>
           ))}
-        </Descriptions>
-      </div>
-
-      <div
-        style={{
-          flex: '1',
-          minWidth: '21rem',
-        }}>
-        {/* <Descriptions bordered size="small" style={{ width: '100%' }}>
-          {detailsRight.map((item) => (
-            <Descriptions.Item label={<span style={labelStyle}>{item.label}</span>} span={6}>
-              <div style={{ ...contentWrapperStyle }}>{item.content}</div>
-            </Descriptions.Item>
-          ))}
-        </Descriptions> */}
-
-        <DecodedResult decodedCalldata={decodedCalldata} />
-
-        {props.transaction.executed && (
-          <Descriptions bordered size="small" style={{ width: '100%', marginTop: '1rem' }}>
-            <Descriptions.Item label={<span style={labelStyle}>Executed</span>} span={6}>
+          {props.transaction.executed && (
+            <Descriptions.Item label={<span style={labelStyle}>Executed</span>} span={3}>
               <div style={{ ...contentWrapperStyle }} className="mono-nice">
                 {props.transaction.dateExecuted ? (
                   <div>{props.transaction.dateExecuted.toLocaleString()}</div>
@@ -129,8 +89,33 @@ const MSTransactionOverview: FC<IMSTransactionOverviewProps> = (props) => {
                 )}
               </div>
             </Descriptions.Item>
-          </Descriptions>
+          )}
+        </Descriptions>
+      </div>
+      <Divider style={{ margin: 0 }}>
+        {!props.isParentExpanded && (
+          <div
+            onClick={toggleExpansion}
+            style={{
+              cursor: 'pointer',
+              width: '2rem',
+              height: '2rem',
+              borderRadius: '50%',
+              // border: softBorder,
+              backgroundColor: '#fff',
+              boxShadow: 'rgb(0 0 0 / 5%) 0px 2px 6px 3px',
+            }}>
+            {expanded ? <UpOutlined /> : <DownOutlined />}
+          </div>
         )}
+      </Divider>
+
+      <div
+        style={{
+          display: expanded ? 'block' : 'none',
+          flex: '1',
+        }}>
+        <DecodedResult decodedCalldata={decodedCalldata} />
       </div>
     </div>
   );

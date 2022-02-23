@@ -10,6 +10,7 @@ import { InnerAppContext } from '~~/models/CustomContexts';
 import { TransactionRequest } from '@ethersproject/abstract-provider';
 import { Deferrable } from 'ethers/lib/utils';
 import { BigNumber, ethers, utils } from 'ethers';
+import { getCurrentSigner } from '../common/currentSigner';
 
 export interface IMSTransactionActions {
   transaction: MSTransactionModel;
@@ -33,11 +34,20 @@ const MSTransactionActions: FC<IMSTransactionActions> = (props) => {
   const { Moralis } = useMoralis();
 
   const createSignatureForInnerTransaction = async (): Promise<string | undefined> => {
-    const methodName = props.transaction.methodName;
-    const amount = methodName === 'transferFunds' ? BigNumber.from(props.transaction.amount).toString() ?? '0' : '0';
-    const recipient = methodName === 'transferFunds' ? props.transaction.to : props.transaction.signerForOp;
-    const txHash = (await multiSigSafe.getTransactionHash(recipient, amount, props.transaction.calldata)) as string;
-    return ethersContext.signer?.signMessage(ethers.utils.arrayify(txHash));
+    const txHash = (await multiSigSafe.getTransactionHash(props.transaction.calldata)) as string;
+    // need to get signer as workaround for a bug in @web3-react after metamask account changes.
+    const sgn = await getCurrentSigner();
+    return sgn.signMessage(ethers.utils.arrayify(txHash));
+  };
+
+  const orderSigs = async (): Promise<string[]> => {
+    const sigs = props.transaction.signatures;
+    const txHash = (await multiSigSafe.getTransactionHash(props.transaction.calldata)) as string;
+    const recoveredProms = sigs.map((s) => multiSigSafe.recover(txHash, s));
+    const recovered = await Promise.all(recoveredProms);
+    const pairs: [string, string][] = sigs.map((s, idx) => [s, recovered[idx]]);
+    pairs.sort((a: [string, string], b: [string, string]) => (a[1] > b[1] ? 1 : -1));
+    return pairs.map((pair: [string, string]) => pair[0]);
   };
 
   const confirmTx = async (): Promise<void> => {
@@ -50,7 +60,15 @@ const MSTransactionActions: FC<IMSTransactionActions> = (props) => {
     if (myIdx !== -1) throw 'Present account found among tx signers. Confirm should be disabled';
     const newSigners = [...tr.signers, account];
 
-    const signature = await createSignatureForInnerTransaction();
+    let signature;
+    try {
+      signature = await createSignatureForInnerTransaction();
+    } catch (e) {
+      console.error(e);
+      setPendingActionConfirm(false);
+      return;
+    }
+
     const newSignatures = [...tr.signatures, signature];
 
     mObj.set('signers', newSigners);
@@ -66,12 +84,14 @@ const MSTransactionActions: FC<IMSTransactionActions> = (props) => {
     setPendingActionConfirm(false);
   };
 
-  const executeTx = (): void => {
+  const executeTx = async (): Promise<void> => {
     setPendingActionExecute(true);
-    const execTx: Deferrable<TransactionRequest> = multiSigSafe.executeTransaction(
-      props.transaction.calldata,
-      props.transaction.signatures
-    );
+    const orderedSignatures = await orderSigs();
+
+    const sgn = await getCurrentSigner();
+    const execTx: Deferrable<TransactionRequest> = multiSigSafe
+      .connect(sgn)
+      .executeTransaction(props.transaction.calldata, orderedSignatures);
 
     const markExecuted = async (): Promise<void> => {
       const query = new Moralis.Query('MetaTx');
@@ -87,22 +107,27 @@ const MSTransactionActions: FC<IMSTransactionActions> = (props) => {
       }
     };
 
-    void tx?.(execTx, (update) => {
-      if (update && (update.error || update.reason)) {
-        setPendingActionExecute(false);
-      }
-      if (update && (update.status === 'confirmed' || update.status === 1)) {
-        setPendingActionExecute(false);
-        void markExecuted();
-      }
-      if (update && update.code) {
-        // metamask error
-        // may be that user denied transaction, but also actual errors
-        // handle them particularly if you need to
-        // https://github.com/MetaMask/eth-rpc-errors/blob/main/src/error-constants.ts
-        setPendingActionExecute(false);
-      }
-    });
+    try {
+      await tx?.(execTx, (update) => {
+        if (update && (update.error || update.reason)) {
+          setPendingActionExecute(false);
+        }
+        if (update && (update.status === 'confirmed' || update.status === 1)) {
+          setPendingActionExecute(false);
+          void markExecuted();
+        }
+        if (update && update.code) {
+          // metamask error
+          // may be that user denied transaction, but also actual errors
+          // handle them particularly if you need to
+          // https://github.com/MetaMask/eth-rpc-errors/blob/main/src/error-constants.ts
+          setPendingActionExecute(false);
+        }
+      });
+    } catch (e) {
+      console.error(e);
+      setPendingActionExecute(false);
+    }
   };
 
   const revokeTx = async (): Promise<void> => {

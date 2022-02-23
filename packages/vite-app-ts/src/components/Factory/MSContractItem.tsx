@@ -75,7 +75,7 @@ const MSContractItem: FC<IMSContractItemProps> = (props) => {
               padding: '0 1rem',
             }}
             span={descriptionSpan}>
-            <div className="mono-nice">{props.contract.time.toLocaleString()}</div>
+            <div className="mono-nice">{props.contract.createdAt.toLocaleString()}</div>
           </Descriptions.Item>
           <Descriptions.Item
             label="By"

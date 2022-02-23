@@ -1,8 +1,8 @@
 export interface MSSafeEntity {
-  idx: number;
+  contractId: string;
   address: string;
   name: string;
-  time: Date;
+  createdAt: Date;
   creator: string;
   owners: string[];
   confirmationsRequired: number;

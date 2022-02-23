@@ -45,19 +45,19 @@ const MultiSigsPage: FC = () => {
 
   // just the chosen contract
   const identifiedParamContract =
-    chosenContractMode && canGetData ? createdContracts?.find((c) => c.idx.toString() === idxQueryParam) : undefined;
+    chosenContractMode && canGetData ? createdContracts?.find((c) => c.contractId === idxQueryParam) : undefined;
 
   // all owned or created ones
   const myContracts = !chosenContractMode && canGetData ? createdContracts?.filter(isMine) : undefined;
-
   const handleOpenContract = useCallback((c) => {
     setDisplayBack(true);
-    navigate(`/mysafes/${c.idx}`);
+    navigate(`/mysafes/${c.contractId}`);
   }, []);
 
   const handleBack = (): void => {
     navigate(-1);
   };
+
   if (!canGetData) {
     // DISPLAY LOADING STATE / EMPTY STATE WITHOUT NAVI SHELL
     const showNoUserDisplay = userAddressInitExpired && !account;
@@ -199,11 +199,13 @@ const MultiSigsPage: FC = () => {
             margin: '0 auto 8rem',
           }}>
           <StackGrid columnWidth="100%" gutterHeight={16}>
+            {/* <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}> */}
             {myContracts?.map((c: MSSafeEntity) => (
               <div key={c.address}>
                 <MSContractItem openContract={handleOpenContract} contract={c} />
               </div>
             ))}
+            {/* </div> */}
           </StackGrid>
         </div>
       </div>

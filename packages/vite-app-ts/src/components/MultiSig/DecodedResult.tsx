@@ -23,7 +23,6 @@ export const DecodedResult: FC<IDecodeResultProps> = (props) => {
             <span style={{ color: primaryColor }}>{result.signature}</span>
           </Descriptions.Item>
         )}
-
         {result.functionFragment &&
           result.functionFragment.inputs.map((element: { type: string; name: string }, index: number) => {
             let content;

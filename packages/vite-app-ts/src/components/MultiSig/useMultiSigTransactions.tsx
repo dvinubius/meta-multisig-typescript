@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { MSTransactionModel } from './models/ms-transaction.model';
 import { useMoralis } from 'react-moralis';
+import { MSTransactionModel } from './models/ms-transaction.model';
 import { BigNumber } from 'ethers';
 
 export interface MultiSigTransactionsResult {
@@ -46,7 +46,9 @@ export const useMultiSigTransactions = (multiSigSafe: any): MultiSigTransactions
       ...fields,
       id: obj.id,
       executed: true,
-      dateExecuted: fields.createdAt,
+      dateSubmitted: fields.createdAt,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      dateExecuted: new Date(fields.executedAt),
       _moralisObject: obj,
     };
   };
@@ -90,7 +92,7 @@ export const useMultiSigTransactions = (multiSigSafe: any): MultiSigTransactions
         .subscribe()
         .then((subscription) => {
           subscription.on('create', (createdObj) => {
-            setPending((pending) => [...pending, convertObjToModel(createdObj)]);
+            setPending((pending) => [convertObjToModel(createdObj), ...pending]);
           });
           subscription.on('update', (updatedObj) => {
             setPending((pending) => {

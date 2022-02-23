@@ -13,7 +13,7 @@ const SingleMultiSigPage: FC = () => {
   const { injectableAbis, createdContracts, numCreatedContracts } = useContext(InnerAppContext);
   const { idx } = useParams();
 
-  const contract = createdContracts && createdContracts.find((c) => c.idx.toString() === idx);
+  const contract = createdContracts && createdContracts.find((c) => c.contractId === idx);
 
   if (!contract) {
     const doesntExist =

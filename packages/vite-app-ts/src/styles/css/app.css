@@ -94,6 +94,19 @@ button {
 }
 
 .anticon.anticon-left,
-.anticon.anticon-rollback {
+.anticon.anticon-plus,
+.anticon.anticon-send {
   transform: translateY(-1px);
+}
+.anticon.anticon-rollback,
+.anticon.anticon-home {
+  transform: translateY(-2px);
+}
+
+.anticon.anticon-loading {
+  transform: translateY(-3px);
+}
+
+.ant-typography-copy {
+  transform: translateY(-4px);
 }

@@ -128,7 +128,7 @@ const MSTransactionDetails: FC<IMSTransactionDetailsProps> = (props) => {
     <div
       style={{
         flex: '1',
-        minWidth: '21rem',
+        minWidth: '21.5rem',
         maxHeight: '16rem',
         display: 'flex',
         flexDirection: 'column',
@@ -152,14 +152,14 @@ const MSTransactionDetails: FC<IMSTransactionDetailsProps> = (props) => {
         <div style={{ marginTop: '0.5rem' }}>Confirmed</div>
       </div>
       <Divider style={{ marginTop: 0, marginBottom: '0.5rem' }} />
-      <div style={{ flex: 1, overflow: 'auto' }}>
+      <div style={{ flex: 1, overflow: 'auto', marginBottom: '0.5rem' }}>
         <Owners confirmations={confirmations} />
       </div>
     </div>
   );
 
   const actionsPart = (
-    <div style={{ flex: '1', minWidth: '21rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <div style={{ flex: '1', minWidth: '21.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       <Descriptions bordered size="small" style={{ width: '100%' }}>
         <Descriptions.Item label={<span style={labelStyle}>{confirmationsItem.label}</span>} span={6}>
           <div style={{ ...contentWrapperStyle }}>{confirmationsItem.content}</div>

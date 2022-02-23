@@ -22,6 +22,7 @@
     "paths": {
       "~~/*": ["./src/*"],
       "scripts/*": ["./scripts/*"],
+      "tasks/*": ["./tasks/*"],
       "helpers/*": ["./helpers/*"],
       "contracts/*": ["./contracts/*"],
       "tests/*": ["./tests/*"],

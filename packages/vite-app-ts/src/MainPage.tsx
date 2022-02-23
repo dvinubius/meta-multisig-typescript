@@ -1,8 +1,8 @@
 /* eslint-disable import/order */
-import React, { FC, useEffect, useState, createContext, useContext } from 'react';
+import React, { FC, useEffect, useState, useContext } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, Link } from 'react-router-dom';
 import '~~/styles/main-page.css';
-import { useContractReader, useEthersAdaptorFromProviderOrSigners, useGasPrice, useEventListener } from 'eth-hooks';
+import { useContractReader, useEthersAdaptorFromProviderOrSigners, useGasPrice } from 'eth-hooks';
 import { useDexEthPrice } from 'eth-hooks/dapps';
 import { MainPageContracts, MainPageFooter, MainPageHeader } from './components/main';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
@@ -10,7 +10,6 @@ import { useBurnerFallback } from '~~/components/main/hooks/useBurnerFallback';
 import { useEthersContext } from 'eth-hooks/context';
 import { useAppContracts, useConnectAppContracts, useLoadAppContracts } from '~~/config/contractContext';
 import { asEthersAdaptor } from 'eth-hooks/functions';
-import { MSSafeEntity } from './models/contractFactory/ms-safe-entity.model';
 import { loadNonDeployedContractAbi } from './functions/loadNonDeployedAbis';
 import { InjectableAbis } from './generated/injectable-abis/injectable-abis.type';
 import { useWindowWidth } from '@react-hook/window-size';
@@ -26,9 +25,9 @@ import {
 import { Button } from 'antd';
 import MultiSigsPage from './components/pages/ContractFactory/MultiSigsPage';
 import SingleMultiSigPage from './components/pages/ContractFactory/SingleMultiSigPage';
-import { TTransactorFunc } from './eth-components/functions/transactor';
 import { MAINNET_PROVIDER, BURNER_FALLBACK_ENABLED } from '~~/config/appConfig';
 import { InnerAppContext, LayoutContext } from './models/CustomContexts';
+import { useMultiSigSafes } from './components/MultiSig/useMultiSigSafes';
 
 /**
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -76,28 +75,8 @@ export const Main: FC = () => {
   // init contracts
   const factory = useAppContracts('MSFactory', ethersContext.chainId);
 
-  // ** 📟 Listen for broadcast events
-  const [createMultiSigSafeEvents] = useEventListener(factory, 'CreateMultiSigSafe', 0);
-  console.log('📟 CreateMultiSigSafe events:', createMultiSigSafeEvents);
-  const [createdContracts, setCreatedContracts] = useState<MSSafeEntity[]>();
   const account = ethersContext.account;
-  useEffect(() => {
-    if (!createdContracts || createdContracts.length !== createMultiSigSafeEvents.length) {
-      setCreatedContracts(
-        createMultiSigSafeEvents
-          .map((event: any) => ({
-            idx: event.args[0].toNumber(),
-            address: event.args[1],
-            creator: event.args[2],
-            name: event.args[3],
-            time: new Date(event.args[4].toNumber() * 1000),
-            owners: event.args[5],
-            confirmationsRequired: event.args[6].toNumber(),
-          }))
-          .reverse() // most recent first
-      );
-    }
-  }, [createMultiSigSafeEvents, account]);
+  const { safes: createdContracts, loading: loadingSafes } = useMultiSigSafes(factory, account);
 
   const [numCreated] = useContractReader(
     factory,
@@ -122,11 +101,6 @@ export const Main: FC = () => {
   // 💵 This hook will get the price of ETH from 🦄 Uniswap:
   const [ethPrice] = useDexEthPrice(scaffoldAppProviders.mainnetAdaptor?.provider, scaffoldAppProviders.targetNetwork);
 
-  const [route, setRoute] = useState<string>('');
-  useEffect(() => {
-    setRoute(window.location.pathname);
-  }, [setRoute]);
-
   const innerAppContext = {
     injectableAbis,
     createdContracts,
@@ -143,17 +117,12 @@ export const Main: FC = () => {
     widthAboveUserStatusDisplayFit: windowWidth >= breakPointUserStatusDisplayFit,
   };
 
-  console.log('test');
-
   return (
     <LayoutContext.Provider value={layoutContext}>
       <InnerAppContext.Provider value={innerAppContext}>
         <div className="App">
           <BrowserRouter>
             <MainPageHeader scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} />
-
-            {/* Routes should be added between the <Switch> </Switch> as seen below */}
-
             <Link to="/contracts">
               <Button
                 type="default"

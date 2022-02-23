@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Input, Modal, Select, Checkbox, Divider } from 'antd';
+import { Button, Input, Modal, Select, Checkbox, Divider, Typography } from 'antd';
 import React, { FC, ReactElement, SyntheticEvent, useContext, useEffect, useState } from 'react';
 import { AddressInput, Blockie, EtherInput } from '~~/eth-components/ant';
 
@@ -20,20 +20,21 @@ import FormError from '../Shared/FormError';
 import { InnerAppContext } from '~~/models/CustomContexts';
 import { DecodedCalldata } from './models/decoded-calldata.model';
 import { DecodedResult } from './DecodedResult';
+import { getCurrentSigner } from '../common/currentSigner';
+
+const { Link, Text } = Typography;
 
 const { Option } = Select;
 
 const CreateMetaTx: FC = () => {
   const { Moralis } = useMoralis();
 
-  const { multiSigSafe } = useContext(MsSafeContext);
+  const { multiSigSafe, confirmationsRequired: requiredSigners } = useContext(MsSafeContext);
   const { ethPrice } = useContext(InnerAppContext);
   const scaffoldAppProviders = useScaffoldAppProviders();
   const ethersContext = useEthersContext();
 
   const [visibleModal, setVisibleModal] = useState(false);
-
-  const [requiredSigners] = useContractReader(multiSigSafe, multiSigSafe.confirmationsRequired, []);
 
   // FORM
 
@@ -101,7 +102,7 @@ const CreateMetaTx: FC = () => {
         const calldata = createCalldata();
         const decoded = multiSigSafe.interface.parseTransaction({ data: calldata }) as DecodedCalldata;
         console.log('calldata: ', calldata);
-        console.log('decodedDataObject', decoded);
+        console.log('decodedDataObject: ', decoded);
         setDecodedDataObject(decoded);
         setCalldata(calldata);
         setDecodeError('');
@@ -132,7 +133,7 @@ const CreateMetaTx: FC = () => {
       case 'addSigner':
       case 'removeSigner':
         const requiredSignersDiff = updateRequiredSigners ? (methodName === 'addSigner' ? 1 : -1) : 0;
-        const newNumberOfSigners = (requiredSigners as BigNumber).toNumber() + requiredSignersDiff;
+        const newNumberOfSigners = (requiredSigners ?? 0) + requiredSignersDiff;
         return multiSigSafe.interface.encodeFunctionData(methodName, [signerForOp, newNumberOfSigners]);
 
       default:
@@ -149,10 +150,13 @@ const CreateMetaTx: FC = () => {
   if (!submitError && submitResult) {
     submitResultDisplay = (
       <div style={{ margin: 16, padding: 8, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        <div>Tx Created!</div>
+        <div style={{ color: '#111', fontSize: '1rem' }}>Tx Created!</div>
+        <p style={{ color: softTextColor, marginBottom: 0 }}>Your Tx Hash</p>
         <div className="flex-center-reg" style={{ gap: '1rem' }}>
           <Blockie scale={4} address={submitResult} />
-          <div style={{ flex: 1, overflowWrap: 'anywhere' }}>{submitResult}</div>
+          <Text style={{ flex: 1, overflowWrap: 'anywhere' }} copyable>
+            {submitResult}
+          </Text>
         </div>
       </div>
     );
@@ -175,7 +179,8 @@ const CreateMetaTx: FC = () => {
     const txHash = (await multiSigSafe.getTransactionHash(calldata)) as string;
     console.log('txHash', txHash);
 
-    const signature = await ethersContext.signer?.signMessage(ethers.utils.arrayify(txHash));
+    // need to get signer as workaround for a bug in @web3-react after metamask account changes.
+    const signature = await (await getCurrentSigner()).signMessage(ethers.utils.arrayify(txHash));
     console.log('signature', signature);
 
     const recover = await multiSigSafe.recover(txHash, signature);
@@ -208,7 +213,7 @@ const CreateMetaTx: FC = () => {
         metaTx.set('amount', BigNumber.from(0));
         metaTx.set('signerForOp', signerForOp);
         const requiredSignersDiff = updateRequiredSigners ? (methodName === 'addSigner' ? 1 : -1) : 0;
-        const newNumberOfSigners = (requiredSigners as BigNumber).toNumber() + requiredSignersDiff;
+        const newNumberOfSigners = (requiredSigners ?? 0) + requiredSignersDiff;
         metaTx.set('newNumberOfSigners', BigNumber.from(newNumberOfSigners));
       }
 
@@ -252,7 +257,7 @@ const CreateMetaTx: FC = () => {
         onCancel={handleCancel}
         footer={[
           <Button key={1} type="default" style={{ minWidth: mediumButtonMinWidth }} onClick={handleCancel}>
-            {closing ? 'Thanks!' : 'Cancel'}
+            {closing ? 'Thanks' : 'Cancel'}
           </Button>,
           ...(closing
             ? []
@@ -263,7 +268,7 @@ const CreateMetaTx: FC = () => {
                   disabled={(calldata === '0x' && showResult) || !!txNameError}
                   style={{ minWidth: mediumButtonMinWidth }}
                   onClick={handleSubmit}>
-                  Submit
+                  Save
                 </Button>,
               ]),
         ]}>
@@ -328,9 +333,10 @@ const CreateMetaTx: FC = () => {
             <Divider orientation="left">
               <span style={{ color: softTextColor }}>Preview</span>
             </Divider>
-            <p style={{ ...inputStyle, color: softTextColor }}>
-              This calldata will be executed when your metatransaction executes.
+            <p style={{ color: softTextColor, marginBottom: 0 }}>
+              <span style={{ color: '#111' }}>When your metatransaction executes</span>
             </p>
+            <p style={{ color: softTextColor }}>your multisig contract will call itself with the following calldata</p>
             <div style={decodeError ? errorStyle : {}}>{decodeResultDisplay}</div>
             <div style={submitError ? errorStyle : {}}>{submitResultDisplay}</div>
           </>

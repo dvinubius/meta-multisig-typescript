@@ -32,7 +32,7 @@ const ContractDebugHeader: FC<IContractDebugHeaderProps> = (props) => {
         }}>
         <div style={{ fontSize: '1.25rem', fontWeight: 500, marginRight: '1rem' }}>{`${contract.name}`}</div>
         <div>
-          <span>created</span> <span style={{ fontWeight: 500 }}>{contract.time.toLocaleString()}</span>
+          <span>created</span> <span style={{ fontWeight: 500 }}>{contract.createdAt.toLocaleString()}</span>
         </div>
       </div>
       <div

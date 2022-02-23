@@ -82,7 +82,7 @@ export const MainPageContracts: FC<IMainPageContractsProps> = (props) => {
             <div>
               <ContractDebugHeader contract={openedDebugContract.entity} />
               <GenericContract
-                contractName="YourContract"
+                contractName="MultiSigSafe"
                 contract={openedDebugContract.multiSigSafe}
                 key={openedDebugContract.entity.address}
                 mainnetAdaptor={props.scaffoldAppProviders.mainnetAdaptor}
@@ -116,54 +116,5 @@ export const MainPageContracts: FC<IMainPageContractsProps> = (props) => {
         </>
       )}
     </div>
-  );
-
-  return (
-    <>
-      <>
-        {/* **********
-          ❓ this scaffolding is full of commonly used components
-          this <Contract/> component will automatically parse your ABI
-          and give you a form to interact with it locally
-        ********** */}
-        {/* <GenericContract
-          contractName="YourContract"
-          contract={yourContract}
-          mainnetAdaptor={props.scaffoldAppProviders.mainnetAdaptor}
-          blockExplorer={props.scaffoldAppProviders.targetNetwork.blockExplorer}
-        /> */}
-        <GenericContract
-          contractName="YourContractFactory"
-          contract={multiSigFactory}
-          mainnetAdaptor={props.scaffoldAppProviders.mainnetAdaptor}
-          blockExplorer={props.scaffoldAppProviders.targetNetwork.blockExplorer}
-        />
-
-        {/* **********
-         * ❓ uncomment for a second contract:
-         ********** */}
-        {/*
-          <GenericContract
-            contractName="SecondContract"
-            contract={contract={contractList?.['SecondContract']}
-            mainnetProvider={props.appProviders.mainnetProvider}
-            blockExplorer={props.appProviders.targetNetwork.blockExplorer}
-            contractConfig={props.contractConfig}
-          />
-        */}
-
-        {/***********
-         *  ❓ Uncomment to display and interact with an external contract (DAI on mainnet):
-         ********** */}
-        {/* {
-          <GenericContract
-            contractName="DAI"
-            contract={mainnetDai}
-            mainnetAdaptor={props.scaffoldAppProviders.mainnetAdaptor}
-            blockExplorer={NETWORKS.mainnet.blockExplorer}
-          />
-        } */}
-      </>
-    </>
   );
 };

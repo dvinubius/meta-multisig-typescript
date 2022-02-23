@@ -1,5 +1,5 @@
 import { Spin } from 'antd';
-import { useBalance } from 'eth-hooks';
+import { useBalance, useContractReader } from 'eth-hooks';
 import './MultiSig.css';
 import React, { useContext, createContext, FC, useEffect } from 'react';
 
@@ -14,7 +14,6 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { MSTransactionModel } from './models/ms-transaction.model';
 import { InnerAppContext } from '~~/models/CustomContexts';
 import { MultiSigDisplay } from './MultiSigDisplay';
-import { MultiSigAllTransactions } from './models/ms-all-transactions.model';
 
 export const MsSafeContext = createContext<{
   multiSigSafe?: any;
@@ -48,18 +47,22 @@ export const MultiSig: FC<IMultiSigProps> = (props) => {
   const scaffoldAppProviders = useScaffoldAppProviders();
   const injectedProvider = scaffoldAppProviders.localAdaptor;
 
-  const owners = props.contract?.owners;
-  const confirmationsRequired = props.contract?.confirmationsRequired;
   const [balance] = useBalance(props.contract?.address);
+  const confirmationsRequired = props.contract?.confirmationsRequired;
+  const owners = props.contract?.owners;
 
-  const isSelfOwnerOfContract = !!props.contract && !!userAddress && props.contract.owners.includes(userAddress);
-  const isSelfCreatorOfContract = props.contract?.creator === userAddress;
+  const isSelfOwnerOfContract = !!props.contract && !!userAddress && owners?.includes(userAddress);
+  const isSelfCreatorOfContract = props.contract?.creator.toLocaleUpperCase === userAddress.toLocaleUpperCase;
   const uncertain = !!injectedProvider ? !(props.contract && userAddress) : !props.contract;
   const userStatusDisplay = !uncertain && (
-    <UserStatus isSelfCreator={isSelfCreatorOfContract} isSelfOwner={isSelfOwnerOfContract} idx={props.contract?.idx} />
+    <UserStatus
+      isSelfCreator={isSelfCreatorOfContract}
+      isSelfOwner={isSelfOwnerOfContract}
+      idx={+(props.contract?.contractId ?? -1)}
+    />
   );
 
-  const msWalletContext = {
+  const msSafeContext = {
     multiSigSafe,
     owners,
     confirmationsRequired,
@@ -69,10 +72,16 @@ export const MultiSig: FC<IMultiSigProps> = (props) => {
   };
 
   const ready =
-    !!props.contract && multiSigSafe && owners && confirmationsRequired && !initializingTxs && !!pending && !!executed;
+    !!props.contract &&
+    multiSigSafe &&
+    !!owners &&
+    !!confirmationsRequired &&
+    !initializingTxs &&
+    !!pending &&
+    !!executed;
 
   return ready ? (
-    <MsSafeContext.Provider value={msWalletContext}>
+    <MsSafeContext.Provider value={msSafeContext}>
       <MultiSigDisplay userStatusDisplay={userStatusDisplay} />
     </MsSafeContext.Provider>
   ) : (

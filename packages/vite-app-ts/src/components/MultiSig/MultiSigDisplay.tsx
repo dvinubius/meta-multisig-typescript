@@ -1,4 +1,4 @@
-import { Descriptions, Divider } from 'antd';
+import { Button, Descriptions, Divider } from 'antd';
 import { FC, useContext } from 'react';
 import { Address, Balance } from '~~/eth-components/ant';
 import QR from 'qrcode.react';
@@ -18,13 +18,16 @@ import MSTransactionsSection from './MSTransactionsSection';
 import { MsSafeContext } from './MultiSig';
 import Owners from './Owners';
 import Requirements from './Requirements';
+import { TransactionRequest } from '@ethersproject/providers';
+import { Deferrable } from 'ethers/lib/utils';
 
 export interface IMultiSigDisplayProps {
   userStatusDisplay: any;
 }
 
 export const MultiSigDisplay: FC<IMultiSigDisplayProps> = (props) => {
-  const { ethPrice } = useContext(InnerAppContext);
+  const { ethPrice, tx } = useContext(InnerAppContext);
+
   const { owners, balance, multiSigSafe } = useContext(MsSafeContext);
   const { widthAboveMsTxDetailsFit, widthAboveUserStatusDisplayFit } = useContext(LayoutContext);
   const labelStyle = {
