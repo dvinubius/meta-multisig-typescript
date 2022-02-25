@@ -14,7 +14,7 @@
       "**/build/": true,
       "**/build/**/*": true,
       "**/debug/": true,
-      "**/dist/": true,
+      // "**/dist/": true,
       "**/obj": true,
       "yarn-error.log": true,
       "**/yarn-error.log": true,

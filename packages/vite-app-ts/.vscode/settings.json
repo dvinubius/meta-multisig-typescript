@@ -14,7 +14,7 @@
     "**/build/": true,
     "**/build/**/*": true,
     "**/debug/": true,
-    "**/dist/": true,
+    // "**/dist/": true,
     "**/node_modules/": true,
     "**/obj": true,
     "node_modules": true,

@@ -3,6 +3,7 @@
   "version": "0.3.0",
   "license": "MIT",
   "private": true,
+  "homepage": "https://meta-multisig.surge.sh",
   "scripts": {
     "start": "cross-env ENVIRONMENT=DEVELOPMENT vite --force",
     "contracts:external": "yarn shx rm -rf './src/generated/external-contracts' && yarn shx cp -r './scripts/eth-sdk-config.ts.bak' './src/generated/eth-sdk.config.ts' && yarn eth-sdk -p ./src/generated",
