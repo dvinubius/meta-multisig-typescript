@@ -22,6 +22,17 @@ In this particular project we limited the functionality to 3 basic types of tran
 By following the design pattern you should easily be able to extend the functionality.
 
 > If you're an absolute noob to web3, check out the [Ethereum Speed Run](https://twitter.com/austingriffith/status/1421129057500946435).
+
+> ## @dev ⚠️ Production Bundle Issue + Workaround
+> 
+> I was surprised when my production bundle failed to work because of moralis throwing a `TypeError: Right-hand side of 'instanceof' is not callable`.
+> The only solution I was able to find for this involves **changing code in the react-moralis dependency**.
+> 1. go to `packages/vite-app-ts/node_modules/react-moralis/lib/index.esm.js`
+> 2. change `import MoralisImport from 'moralis';` 
+> to `import MoralisImport from 'moralis/dist/moralis.js';`
+> 
+> You may not encounter the issue above due to updates in the react-moralis package. 
+
 ## @dev Design Decisions
 ### On-Chain
 Signatures are always **sorted on the frontend** before a metatransaction is executed. This enables cheaper duplicate prevention. The more expensive solution (in terms of gas costs) would have been to do a duplicate check on-chain.
