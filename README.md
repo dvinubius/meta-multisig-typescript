@@ -1,30 +1,37 @@
-# 🏗 Metatransaction MultiSig Safes
+# 🏗 Metatransaction MultiSig Manager
 
-> Create and manage MultiSig safes which execute metatransactions.
+> Create and manage multi sig contracts which execute metatransactions.
 > 
-> **Users** can create and manage their multisig smart contracts. 
+> **Users** can create and manage their multi sig smart contracts. 
 > 
 > **Metatransactions** allow for signatures to be given off-chain (no gas fees to pay except once, when all required signatures have been given)
 > 
 > MultiSigs management is based on a **smart contract factory** 🏭
 
-<img src="https://user-images.githubusercontent.com/32189942/155862105-e21d8114-96f5-4b33-ab3d-d7bac4149637.png" width=500><img src="https://user-images.githubusercontent.com/32189942/155862098-bc047f2a-525c-4d4e-95b8-7cfe72b63150.png" width=500>
+<img src="https://user-images.githubusercontent.com/32189942/155862105-e21d8114-96f5-4b33-ab3d-d7bac4149637.png" width=450><img src="https://user-images.githubusercontent.com/32189942/155862098-bc047f2a-525c-4d4e-95b8-7cfe72b63150.png" width=450>
 
 
-<img src="https://user-images.githubusercontent.com/32189942/155862060-99b0beb7-e8ad-43d6-93dc-1b6e9b2f9cce.png" width=500> <img src="https://user-images.githubusercontent.com/32189942/155862076-5288c75a-9c05-4ef6-95d2-3ea4c3875aaf.png" width=500>
+<img src="https://user-images.githubusercontent.com/32189942/155862060-99b0beb7-e8ad-43d6-93dc-1b6e9b2f9cce.png" width=450> <img src="https://user-images.githubusercontent.com/32189942/155862076-5288c75a-9c05-4ef6-95d2-3ea4c3875aaf.png" width=450>
 
 
 ## Live on [Rinkeby](https://meta-multisig.surge.sh/) 🤩
 
 ## Use Case
 
-**Personal use**: Any use case for a **regular multisig safe**, but additionally **tx costs** should be kept **minimal**.
+**It's for personal use / within groups of mutual trust** (not a forwarder contract) 
+It covers "usual: use casess for a **regular multi sig contract**, but additionally **tx costs** are kept **minimal**.
+As a user I can create a multi sig contract to hold funds for me.
+I can set up several signer accounts that can trigger my contract's functions.
+My contract's built-in functions include
+- basic transfer of funds
+- adding a trusted signer
+- removing a trusted signer
 
 **Metatransactions** enable gasless blockchain interaction (kind of). 
 
-### Regular Multisig
+### The regular Multi Sig
 Several signers **confirm** a multisig transaction. This happens on-chain, so each signer performs a confirmation transaction. 
-### Metatransaction Multisig (this app)
+### Meta Transaction Multi Sig (this app)
 Let the signers merely give their signature (off-chain). With all needed signatures collected, **only 1 on-chain transaction is needed**. The multisig contract verifies that enough valid signatures were given.
 
 In this particular project we limited the functionality to 3 basic types of transaction:
