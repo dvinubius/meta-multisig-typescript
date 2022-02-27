@@ -37,8 +37,8 @@ By following the design pattern you should easily be able to extend the function
 
 > ## @dev ⚠️ Production Bundle Issue + Workaround
 > 
-> I was surprised when my production bundle failed to work because of moralis throwing a `TypeError: Right-hand side of 'instanceof' is not callable`.
-> The only solution I was able to find for this involves **changing code in the react-moralis dependency**.
+> We were surprised when the production bundle failed to work because of moralis throwing a `TypeError: Right-hand side of 'instanceof' is not callable`.
+> The only solution we were able to find for this involves **changing code in the react-moralis dependency**.
 > 1. go to `packages/vite-app-ts/node_modules/react-moralis/lib/index.esm.js`
 > 2. change `import MoralisImport from 'moralis';` 
 > to `import MoralisImport from 'moralis/dist/moralis.js';`
