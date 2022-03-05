@@ -86,6 +86,7 @@ const CreateMetaTx: FC = () => {
     setTxNameError(txNameErrorText);
     resetMethodState();
     setMethodName(undefined);
+    setClosing(false);
   };
 
   const updateTxName = (ev: SyntheticEvent) => {
