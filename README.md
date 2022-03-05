@@ -8,13 +8,9 @@
 > 
 > MultiSigs management is based on a **smart contract factory** 🏭
 
-<img src="https://user-images.githubusercontent.com/32189942/155862105-e21d8114-96f5-4b33-ab3d-d7bac4149637.png" width=450><img src="https://user-images.githubusercontent.com/32189942/155862098-bc047f2a-525c-4d4e-95b8-7cfe72b63150.png" width=450>
-
-
-<img src="https://user-images.githubusercontent.com/32189942/155862060-99b0beb7-e8ad-43d6-93dc-1b6e9b2f9cce.png" width=450> <img src="https://user-images.githubusercontent.com/32189942/155862076-5288c75a-9c05-4ef6-95d2-3ea4c3875aaf.png" width=450>
-
-
 ## Live on [Rinkeby](https://meta-multisig.surge.sh/) 🤩
+
+![meta-multisig](https://user-images.githubusercontent.com/32189942/156895896-ed43c115-b0cd-4333-ba81-61b0e88980d4.png)
 
 ## Use Case
 
