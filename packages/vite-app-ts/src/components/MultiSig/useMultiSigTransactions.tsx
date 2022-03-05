@@ -19,7 +19,7 @@ export interface ExecutedEventModel {
 }
 
 export const useMultiSigTransactions = (multiSigVault: any): MultiSigTransactionsResult => {
-  const safeAddress = multiSigVault.address;
+  const vaultAddress = multiSigVault.address;
 
   const [pending, setPending] = useState<MSTransactionModel[]>([]);
   const [executed, setExecuted] = useState<MSTransactionModel[]>([]);
@@ -55,7 +55,7 @@ export const useMultiSigTransactions = (multiSigVault: any): MultiSigTransaction
 
   useEffect(() => {
     const qSubmitted = new Moralis.Query('MetaTx');
-    qSubmitted.equalTo('safeAddress', safeAddress);
+    qSubmitted.equalTo('safeAddress', vaultAddress);
     qSubmitted.equalTo('executedAt', 0);
     qSubmitted.descending('createdAt');
     qSubmitted
@@ -68,7 +68,7 @@ export const useMultiSigTransactions = (multiSigVault: any): MultiSigTransaction
       });
 
     const qExecuted = new Moralis.Query('MetaTx');
-    qExecuted.equalTo('safeAddress', safeAddress);
+    qExecuted.equalTo('safeAddress', vaultAddress);
     qExecuted.greaterThan('executedAt', 0);
     qExecuted.descending('createdAt');
     qExecuted
@@ -79,13 +79,13 @@ export const useMultiSigTransactions = (multiSigVault: any): MultiSigTransaction
       .catch((err) => {
         console.error('MORALIS QUERY FAILED: ', err);
       });
-  }, [Moralis, safeAddress]);
+  }, [Moralis, vaultAddress]);
 
   useEffect(() => {
     if (!!pending && !hasSubscribedPending) {
       setHasSubscribedPending(true);
       const query = new Moralis.Query('MetaTx');
-      query.equalTo('safeAddress', safeAddress);
+      query.equalTo('safeAddress', vaultAddress);
       query.equalTo('executedAt', 0);
       query.descending('createdAt');
       query
@@ -108,13 +108,13 @@ export const useMultiSigTransactions = (multiSigVault: any): MultiSigTransaction
           console.error('MORALIS SUBSCRIPTION FAILED: ', err);
         });
     }
-  }, [pending, hasSubscribedPending, Moralis, safeAddress]);
+  }, [pending, hasSubscribedPending, Moralis, vaultAddress]);
 
   useEffect(() => {
     if (!!executed && !hasSubscribedExecuted) {
       setHasSubscribedExecuted(true);
       const query = new Moralis.Query('MetaTx');
-      query.equalTo('safeAddress', safeAddress);
+      query.equalTo('safeAddress', vaultAddress);
       query.greaterThan('executedAt', 0);
       query.descending('createdAt');
       query.descending('executedAt');
@@ -137,7 +137,7 @@ export const useMultiSigTransactions = (multiSigVault: any): MultiSigTransaction
           console.error('MORALIS SUBSCRIPTION FAILED: ', err);
         });
     }
-  }, [executed, hasSubscribedExecuted, Moralis, safeAddress]);
+  }, [executed, hasSubscribedExecuted, Moralis, vaultAddress]);
 
   return {
     initializing: !hasSubscribedExecuted || !hasSubscribedPending,

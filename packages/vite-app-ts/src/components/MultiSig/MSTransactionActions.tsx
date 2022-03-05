@@ -219,7 +219,7 @@ const MSTransactionActions: FC<IMSTransactionActions> = (props) => {
             justifyContent: 'center',
             gap: '0.5rem',
           }}>
-          <WarningOutlined /> Safe: insufficient funds for the transaction
+          <WarningOutlined /> Vault: insufficient funds for the transaction
         </div>
       )}
     </div>

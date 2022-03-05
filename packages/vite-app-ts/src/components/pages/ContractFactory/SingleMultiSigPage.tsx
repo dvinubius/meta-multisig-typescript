@@ -52,7 +52,7 @@ const SingleMultiSigPage: FC = () => {
               gap: '1rem',
             }}>
             <Spin size="large" />
-            <div style={{ color: softTextColor, fontSize: '1.25rem' }}>Connecting to Safe Contract...</div>
+            <div style={{ color: softTextColor, fontSize: '1.25rem' }}>Connecting to Vault Contract...</div>
           </div>
         )}
       </div>

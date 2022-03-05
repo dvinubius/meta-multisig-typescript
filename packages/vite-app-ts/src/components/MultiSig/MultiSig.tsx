@@ -62,7 +62,7 @@ export const MultiSig: FC<IMultiSigProps> = (props) => {
     />
   );
 
-  const msSafeContext = {
+  const msVaultContext = {
     multiSigVault,
     owners,
     confirmationsRequired,
@@ -81,7 +81,7 @@ export const MultiSig: FC<IMultiSigProps> = (props) => {
     !!executed;
 
   return ready ? (
-    <MsVaultContext.Provider value={msSafeContext}>
+    <MsVaultContext.Provider value={msVaultContext}>
       <MultiSigDisplay userStatusDisplay={userStatusDisplay} />
     </MsVaultContext.Provider>
   ) : (

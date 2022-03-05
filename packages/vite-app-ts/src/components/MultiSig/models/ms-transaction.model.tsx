@@ -4,7 +4,7 @@ export interface MSTransactionModel {
   txName: string;
   creator: string;
   id: string;
-  safeAddress: string;
+  vaultAddress: string;
   signatures: string[];
   signers: string[];
   txHash: string;
