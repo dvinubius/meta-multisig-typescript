@@ -32,12 +32,12 @@ const SingleMultiSigPage: FC = () => {
         {doesntExist && (
           <>
             <div style={{ color: softTextColor, fontSize: '1.25rem' }}>
-              <FileUnknownOutlined /> This safe doesn't exist
+              <FileUnknownOutlined /> This vault doesn't exist
             </div>
             <Link to="/">
               <Button style={{ minWidth: mediumButtonMinWidth }} size="large" className="flex-center-imp">
                 <HomeOutlined />
-                My Safes
+                My Vaults
               </Button>
             </Link>
           </>
@@ -63,7 +63,7 @@ const SingleMultiSigPage: FC = () => {
     <Link to="/">
       <Button style={{ minWidth: mediumButtonMinWidth }} size="large" className="flex-center-imp">
         <HomeOutlined />
-        My Safes
+        My Vaults
       </Button>
     </Link>
   );

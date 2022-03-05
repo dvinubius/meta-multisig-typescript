@@ -87,9 +87,9 @@ We use it to
 Storing metatransactions was the primary reason to use a backend, but since Moralis can easily index contract events, it's convenient to use for queries and it reduces the number of RPC requests.
   
 The Moralis integration is **optimized to scale**:
-When user logs in with account X, the query for "My Safes" runs on the backend via cloud code, returning the safes where X is currently a co-owner. 
-- This includes safes that initially did not have X as a co-owner, but added X later.
-- This excludes safes where X initially was a co-owner, but then was excluded.
+When user logs in with account X, the query for "My Vaults" runs on the backend via cloud code, returning the vaults where X is currently a co-owner. 
+- This includes vaults that initially did not have X as a co-owner, but added X later.
+- This excludes vaults where X initially was a co-owner, but then was excluded.
 
 
 **⚠️ Frontend consistency**. The frontend displays on-chain data correctly only as long as contract interactions go through this frontend. This should be fine for our use case.
@@ -100,7 +100,7 @@ Also, Moralis wasn't reliably syncing events with indexed address array argument
 
 If you want to develop on top of this repo, learn from the [docs](https://docs.moralis.io/introduction/readme) how to use Moralis. You need to: 
 - setup a server
-- sync events from your MSFactory contract (when safes are created and when owners changes happen)
+- sync events from your MSFactory contract (when vaults are created and when owners changes happen)
 - configure access to Moralis DB tables (by default each table has public read/write/create_field access)
 
 ### Frontend UX

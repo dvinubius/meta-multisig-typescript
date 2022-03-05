@@ -4,7 +4,7 @@ Moralis.Cloud.define('MultiSigVaults', async (request) => {
   queryCreated.descending('createdAt');
   const res = await queryCreated.find();
 
-  const safePromises = res.map(async (safe) => {
+  const vaultPromises = res.map(async (safe) => {
     const querySafeOwners = new Parse.Query('OwnersChanged');
     querySafeOwners.equalTo('safe', safe.attributes.contractAddress);
     querySafeOwners.descending('createdAt');
@@ -17,6 +17,6 @@ Moralis.Cloud.define('MultiSigVaults', async (request) => {
     };
   });
 
-  const safes = await Promise.all(safePromises);
-  return safes.filter((s) => s.owners.includes(owner));
+  const vaults = await Promise.all(vaultPromises);
+  return vaults.filter((s) => s.owners.includes(owner));
 });

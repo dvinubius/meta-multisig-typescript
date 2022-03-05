@@ -28,7 +28,7 @@ const MultiSigsPage: FC = () => {
   const [eventQueryExpired, setEventQueryExpired] = useState<boolean>(false);
   useEffect(() => {
     setTimeout(() => setEventQueryExpired(true), 6500);
-  }, []); // if after this time no results, assume this user nas no owned safes
+  }, []); // if after this time no results, assume this user nas no owned vaults
 
   const [userAddressInitExpired, setUserAddressInitExpired] = useState(false);
   useEffect(() => {
@@ -51,7 +51,7 @@ const MultiSigsPage: FC = () => {
   const myContracts = !chosenContractMode && canGetData ? createdContracts?.filter(isMine) : undefined;
   const handleOpenContract = useCallback((c) => {
     setDisplayBack(true);
-    navigate(`/mysafes/${c.contractId}`);
+    navigate(`/myvaults/${c.contractId}`);
   }, []);
 
   const handleBack = (): void => {
@@ -115,7 +115,7 @@ const MultiSigsPage: FC = () => {
           size="large"
           onClick={(): void => navigate('/')}>
           <HomeOutlined />
-          My Safes
+          My Vaults
         </Button>
       )}
     </div>
@@ -129,7 +129,7 @@ const MultiSigsPage: FC = () => {
     <CodeSandboxOutlined />
   ) : (
     <>
-      <CodeSandboxOutlined /> My Safes
+      <CodeSandboxOutlined /> My Vaults
     </>
   );
 
@@ -170,7 +170,7 @@ const MultiSigsPage: FC = () => {
             <>
               <Spin size="large" />
               <div style={{ color: softTextColor, fontSize: '1.25rem' }}>
-                {chosenContractMode ? 'Connecting to your safe...' : 'Retrieving your safes...'}
+                {chosenContractMode ? 'Connecting to your vault...' : 'Retrieving your vaults...'}
               </div>
             </>
           )}
@@ -178,8 +178,8 @@ const MultiSigsPage: FC = () => {
           {eventQueryExpired && (
             <div style={{ color: softTextColor, fontSize: '1.25rem' }}>
               {chosenContractMode
-                ? 'Could not find this safe among your own'
-                : "Looks like you don't own any safes yet"}
+                ? 'Could not find this vault among your own'
+                : "Looks like you don't own any vaults yet"}
             </div>
           )}
         </div>
