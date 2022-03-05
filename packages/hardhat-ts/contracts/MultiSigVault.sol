@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "hardhat/console.sol";
 import "./MSLogger.sol";
 
-contract MultiSigSafe {
+contract MultiSigVault {
   using ECDSA for bytes32;
 
   address[] public owners;

@@ -3,13 +3,13 @@ import { cardGradient, mediumButtonMinWidth, softTextColor } from '~~/styles/sty
 
 import { Button, Card, Descriptions } from 'antd';
 import { ArrowsAltOutlined } from '@ant-design/icons';
-import { MSSafeEntity } from '~~/models/contractFactory/ms-safe-entity.model';
+import { MSVaultEntity } from '~~/models/contractFactory/ms-vault-entity.model';
 import { Address } from '~~/eth-components/ant';
 import { LayoutContext } from '~~/models/CustomContexts';
 
 export interface IMSContractItemProps {
-  openContract: (c: MSSafeEntity) => void;
-  contract: MSSafeEntity;
+  openContract: (c: MSVaultEntity) => void;
+  contract: MSVaultEntity;
 }
 
 const MSContractItem: FC<IMSContractItemProps> = (props) => {

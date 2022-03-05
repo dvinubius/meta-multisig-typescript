@@ -1,7 +1,7 @@
 import React, { FC, ReactElement, useContext, useState } from 'react';
 import { RollbackOutlined, SendOutlined, SmileOutlined, WarningOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import { MsSafeContext } from './MultiSig';
+import { MsVaultContext } from './MultiSig';
 import { errorColor, softBorder, cardGradientGrey } from '~~/styles/styles';
 import { MSTransactionModel } from './models/ms-transaction.model';
 import { useEthersContext } from 'eth-hooks/context';
@@ -17,13 +17,13 @@ export interface IMSTransactionActions {
   canConfirm: boolean;
   canExecute: boolean;
   canRevoke: boolean;
-  multiSigSafe: any;
+  multiSigVault: any;
   onExecute?: () => void;
 }
 
 const MSTransactionActions: FC<IMSTransactionActions> = (props) => {
   const { tx } = useContext(InnerAppContext);
-  const { balance, multiSigSafe } = useContext(MsSafeContext);
+  const { balance, multiSigVault } = useContext(MsVaultContext);
   const ethersContext = useEthersContext();
   const account = ethersContext.account;
 
@@ -34,7 +34,7 @@ const MSTransactionActions: FC<IMSTransactionActions> = (props) => {
   const { Moralis } = useMoralis();
 
   const createSignatureForInnerTransaction = async (): Promise<string | undefined> => {
-    const txHash = (await multiSigSafe.getTransactionHash(props.transaction.calldata)) as string;
+    const txHash = (await multiSigVault.getTransactionHash(props.transaction.calldata)) as string;
     // need to get signer as workaround for a bug in @web3-react after metamask account changes.
     const sgn = await getCurrentSigner();
     return sgn.signMessage(ethers.utils.arrayify(txHash));
@@ -42,8 +42,8 @@ const MSTransactionActions: FC<IMSTransactionActions> = (props) => {
 
   const orderSigs = async (): Promise<string[]> => {
     const sigs = props.transaction.signatures;
-    const txHash = (await multiSigSafe.getTransactionHash(props.transaction.calldata)) as string;
-    const recoveredProms = sigs.map((s) => multiSigSafe.recover(txHash, s));
+    const txHash = (await multiSigVault.getTransactionHash(props.transaction.calldata)) as string;
+    const recoveredProms = sigs.map((s) => multiSigVault.recover(txHash, s));
     const recovered = await Promise.all(recoveredProms);
     const pairs: [string, string][] = sigs.map((s, idx) => [s, recovered[idx]]);
     pairs.sort((a: [string, string], b: [string, string]) => (a[1] > b[1] ? 1 : -1));
@@ -89,7 +89,7 @@ const MSTransactionActions: FC<IMSTransactionActions> = (props) => {
     const orderedSignatures = await orderSigs();
 
     const sgn = await getCurrentSigner();
-    const execTx: Deferrable<TransactionRequest> = multiSigSafe
+    const execTx: Deferrable<TransactionRequest> = multiSigVault
       .connect(sgn)
       .executeTransaction(props.transaction.calldata, orderedSignatures);
 

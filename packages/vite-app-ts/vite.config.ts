@@ -61,6 +61,7 @@ export default defineConfig({
   define: {},
   optimizeDeps: {
     exclude: excludeDeps,
+    include: ['eth-hooks'],
   },
   resolve: {
     preserveSymlinks: true,

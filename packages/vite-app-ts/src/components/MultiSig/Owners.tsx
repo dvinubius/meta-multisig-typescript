@@ -2,7 +2,7 @@ import { List, Spin } from 'antd';
 import React, { FC, useContext, useState } from 'react';
 
 import './MultiSig.css';
-import { MsSafeContext } from './MultiSig';
+import { MsVaultContext } from './MultiSig';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { primaryColor } from '~~/styles/styles';
 import { Address } from '~~/eth-components/ant/Address';
@@ -15,7 +15,7 @@ export interface IOwnersProps {
 
 const Owners: FC<IOwnersProps> = (props) => {
   const { account } = useEthersContext();
-  const { owners } = useContext(MsSafeContext);
+  const { owners } = useContext(MsVaultContext);
 
   const singleColumn = (
     <>

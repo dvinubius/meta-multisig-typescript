@@ -6,7 +6,7 @@ import { mainColWidthRem, mediumButtonMinWidth, softTextColor } from '~~/styles/
 import StackGrid from 'react-stack-grid';
 import NaviMultiSigs from './NaviMultiSigs';
 import { useNavigate, useParams } from 'react-router-dom';
-import { MSSafeEntity } from '../../../models/contractFactory/ms-safe-entity.model';
+import { MSVaultEntity } from '../../../models/contractFactory/ms-vault-entity.model';
 import { useEthersContext } from 'eth-hooks/context';
 import CreateMultiSig from '~~/components/Factory/CreateMultiSig';
 import { MultiSig } from '~~/components/MultiSig/MultiSig';
@@ -37,7 +37,7 @@ const MultiSigsPage: FC = () => {
 
   const ethersContext = useEthersContext();
   const account = ethersContext.account;
-  const isMine = (c: MSSafeEntity): boolean => !!account && (c.owners.includes(account) || c.creator === account);
+  const isMine = (c: MSVaultEntity): boolean => !!account && (c.owners.includes(account) || c.creator === account);
 
   const canGetData = chosenContractMode
     ? !!idxQueryParam && !!createdContracts && !!account && !!injectableAbis
@@ -200,7 +200,7 @@ const MultiSigsPage: FC = () => {
           }}>
           <StackGrid columnWidth="100%" gutterHeight={16}>
             {/* <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}> */}
-            {myContracts?.map((c: MSSafeEntity) => (
+            {myContracts?.map((c: MSVaultEntity) => (
               <div key={c.address}>
                 <MSContractItem openContract={handleOpenContract} contract={c} />
               </div>

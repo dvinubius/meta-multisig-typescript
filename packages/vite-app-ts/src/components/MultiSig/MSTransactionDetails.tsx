@@ -3,7 +3,7 @@ import React, { FC, useContext, useEffect, useState, useCallback } from 'react';
 import { softBorder2, primaryColor, softTextColor, cardGradient } from '~~/styles/styles';
 import MSTransactionActions from './MSTransactionActions';
 import { contentWrapperStyle, labelStyle } from './MSTransactionStyles';
-import { MsSafeContext } from './MultiSig';
+import { MsVaultContext } from './MultiSig';
 import Owners from './Owners';
 import { MSTransactionModel } from './models/ms-transaction.model';
 import { useEthersContext } from 'eth-hooks/context';
@@ -24,7 +24,7 @@ const MSTransactionDetails: FC<IMSTransactionDetailsProps> = (props) => {
   const userAddress = ethersContext.account;
   const { widthAboveMsTxDetailsFit } = useContext(LayoutContext);
 
-  const { owners, confirmationsRequired: totalConfsNeeded, multiSigSafe } = useContext(MsSafeContext);
+  const { owners, confirmationsRequired: totalConfsNeeded, multiSigVault } = useContext(MsVaultContext);
 
   // CONFIRMATIONS
 
@@ -168,7 +168,7 @@ const MSTransactionDetails: FC<IMSTransactionDetailsProps> = (props) => {
       {props.isSelfOwner && (
         <MSTransactionActions
           transaction={transaction}
-          multiSigSafe={multiSigSafe}
+          multiSigVault={multiSigVault}
           canConfirm={canConfirm ?? false}
           canExecute={canExecute ?? false}
           canRevoke={canRevoke ?? false}

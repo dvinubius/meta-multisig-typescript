@@ -7,7 +7,7 @@ import createModalFooter from '../Shared/createModalFooter';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
 import CreateModalSentOverlay from '../Shared/CreateModalSentOverlay';
 import './CreateMsTx.css';
-import { MsSafeContext } from './MultiSig';
+import { MsVaultContext } from './MultiSig';
 import BytesInput from '../Shared/BytesInput';
 import { ethers } from 'ethers';
 import { InnerAppContext } from '~~/models/CustomContexts';
@@ -15,7 +15,7 @@ import { TransactionRequest } from '@ethersproject/abstract-provider';
 import { Deferrable } from 'ethers/lib/utils';
 
 const CreateMsTx: FC = () => {
-  const { multiSigSafe } = useContext(MsSafeContext);
+  const { multiSigVault } = useContext(MsVaultContext);
   const { ethPrice, tx } = useContext(InnerAppContext);
   const scaffoldAppProviders = useScaffoldAppProviders();
 
@@ -43,7 +43,7 @@ const CreateMsTx: FC = () => {
       const v: string = form.getFieldValue('value');
       const value = ethers.utils.parseEther(v);
       const data = form.getFieldValue('data') ?? '0x';
-      const transaction: Deferrable<TransactionRequest> = multiSigSafe?.submitTransaction(to, value, data);
+      const transaction: Deferrable<TransactionRequest> = multiSigVault?.submitTransaction(to, value, data);
       setTxError(false);
       void tx?.(transaction, (update) => {
         if (update && (update.error || update.reason)) {

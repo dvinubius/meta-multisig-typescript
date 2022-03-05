@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 /**
- * Logs events of all created MultiSigSafes.
+ * Logs events of all created MultiSigVaults.
  * Necessary for better integration with Moralis contract event sync.
  */
 contract MSLogger {

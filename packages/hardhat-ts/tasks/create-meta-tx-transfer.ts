@@ -1,8 +1,8 @@
 import { task } from 'hardhat/config';
 
-const createCalldata = (hre, to, multiSigSafe): string => {
+const createCalldata = (hre, to, multiSigVault): string => {
   const amountStr = hre.ethers.utils.parseUnits('0.1');
-  return multiSigSafe.interface.encodeFunctionData('transferFunds', [to, amountStr]);
+  return multiSigVault.interface.encodeFunctionData('transferFunds', [to, amountStr]);
 };
 
 task('create-meta-tx-transfer', 'Creta Metatransaction with transfer call')
@@ -11,7 +11,7 @@ task('create-meta-tx-transfer', 'Creta Metatransaction with transfer call')
   .setAction(async (taskArgs, hre) => {
     const factory = await hre.ethers.getContractAt('MSFactory', taskArgs.factory);
     const multiSigAddress = await factory.getContractById(taskArgs.idx);
-    const multiSig = await hre.ethers.getContractAt('MultiSigSafe', multiSigAddress);
+    const multiSig = await hre.ethers.getContractAt('MultiSigVault', multiSigAddress);
 
     const signers = await hre.ethers.getSigners();
 
@@ -45,9 +45,9 @@ task('create-meta-tx-transfer', 'Creta Metatransaction with transfer call')
 
 > let signer = (await ethers.getSigners())[0];
 > let factoryContract = await ethers.getContractAt('MSFactory', factoryAddress);
-> let createMultiSigTx = await factoryContract.createMultiSigSafe("First", ["0x281f0d74Fa356C17E36603995e0f50D298d4a5A9", signer.address], 1);
+> let createMultiSigTx = await factoryContract.createMultiSigVault("First", ["0x281f0d74Fa356C17E36603995e0f50D298d4a5A9", signer.address], 1);
 
-> let multiSigContract = await ethers.getContractAt('MultiSigSafe', await factoryContract.contractById(0));
+> let multiSigContract = await ethers.getContractAt('MultiSigVault', await factoryContract.contractById(0));
 
 > let transferCallData = multiSigContract.interface.encodeFunctionData('transferFunds', [signer.address, ethers.utils.parseUnits("0.1")])
 

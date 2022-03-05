@@ -1,4 +1,4 @@
-export interface MSSafeEntity {
+export interface MSVaultEntity {
   contractId: string;
   address: string;
   name: string;

@@ -112,7 +112,7 @@ const CreateMultiSig: FC = () => {
       setPendingCreate(true);
       // need to get signer as workaround for a bug in @web3-react after metamask account changes.
       const sgn = await getCurrentSigner();
-      const transaction = msFactory.connect(sgn).createMultiSigSafe(name, owners, numConfs);
+      const transaction = msFactory.connect(sgn).createMultiSigVault(name, owners, numConfs);
       setTxError(false);
       tx(transaction, (update) => {
         if (update && (update.error || update.reason)) {

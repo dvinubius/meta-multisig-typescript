@@ -27,7 +27,7 @@ import MultiSigsPage from './components/pages/ContractFactory/MultiSigsPage';
 import SingleMultiSigPage from './components/pages/ContractFactory/SingleMultiSigPage';
 import { MAINNET_PROVIDER, BURNER_FALLBACK_ENABLED } from '~~/config/appConfig';
 import { InnerAppContext, LayoutContext } from './models/CustomContexts';
-import { useMultiSigSafes } from './components/MultiSig/useMultiSigSafes';
+import { useMultiSigVaults } from './components/MultiSig/useMultiSigVaults';
 
 /**
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -76,23 +76,23 @@ export const Main: FC = () => {
   const factory = useAppContracts('MSFactory', ethersContext.chainId);
 
   const account = ethersContext.account;
-  const { safes: createdContracts, loading: loadingSafes } = useMultiSigSafes(factory, account);
+  const { vaults: createdContracts, loading: loadingVaults } = useMultiSigVaults(factory, account);
 
   const [numCreated] = useContractReader(
     factory,
     factory?.numberOfContracts,
     [],
-    factory?.filters.CreateMultiSigSafe()
+    factory?.filters.CreateMultiSigVault()
   );
 
   const [injectableAbis, setInjectableAbis] = useState<InjectableAbis>();
   useEffect(() => {
     const load = async (): Promise<void> => {
-      const MultiSigSafe = await loadNonDeployedContractAbi('MultiSigSafe');
-      if (MultiSigSafe) {
-        setInjectableAbis({ MultiSigSafe });
+      const MultiSigVault = await loadNonDeployedContractAbi('MultiSigVault');
+      if (MultiSigVault) {
+        setInjectableAbis({ MultiSigVault });
       } else {
-        console.error(`Could not find injectable abi for MultiSigSafe`);
+        console.error(`Could not find injectable abi for MultiSigVault`);
       }
     };
     load().catch((e) => console.error(e));
@@ -146,7 +146,7 @@ export const Main: FC = () => {
             <div className="AppScroller">
               <Routes>
                 <Route
-                  path="/mysafes/:idx"
+                  path="/myvaults/:idx"
                   element={
                     <div className="AppCenteredCol">
                       <MultiSigsPage />
@@ -154,15 +154,15 @@ export const Main: FC = () => {
                   }
                 />
                 <Route
-                  path="/mysafes"
+                  path="/myvaults"
                   element={
                     <div className="AppCenteredCol">
                       <MultiSigsPage />
                     </div>
                   }
                 />
-                <Route path="/" element={<Navigate replace to="/mysafes" />} />
-                <Route path="/safe/:idx" element={<SingleMultiSigPage />} />
+                <Route path="/" element={<Navigate replace to="/myvaults" />} />
+                <Route path="/vault/:idx" element={<SingleMultiSigPage />} />
                 <Route
                   path="/contracts"
                   element={

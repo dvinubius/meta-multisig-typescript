@@ -86,6 +86,7 @@ export const getWeb3ModalConfig = async (): Promise<Partial<ICoreOptions>> => {
         rpc: {
           1: `https://mainnet.infura.io/v3/${INFURA_ID}`,
           42: `https://kovan.infura.io/v3/${INFURA_ID}`,
+          4: `https://rinkeby.infura.io/v3/${INFURA_ID}`,
           100: 'https://dai.poa.network',
         },
       },

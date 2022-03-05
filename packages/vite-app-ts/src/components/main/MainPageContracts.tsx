@@ -5,7 +5,7 @@ import { IScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppPr
 import { useEthersContext } from 'eth-hooks/context';
 import { useAppContracts } from '~~/config/contractContext';
 import { Button, Divider } from 'antd';
-import { MSSafeEntity } from '../../models/contractFactory/ms-safe-entity.model';
+import { MSVaultEntity } from '../../models/contractFactory/ms-vault-entity.model';
 import { LeftOutlined } from '@ant-design/icons';
 import { mediumButtonMinWidth } from '~~/styles/styles';
 
@@ -30,11 +30,11 @@ export const MainPageContracts: FC<IMainPageContractsProps> = (props) => {
   const signer = ethersContext.signer;
 
   const { injectableAbis, createdContracts } = useContext(InnerAppContext);
-  const abi = injectableAbis?.MultiSigSafe;
+  const abi = injectableAbis?.MultiSigVault;
 
   const [openedDebugContract, setOpenedDebugContract] = useState<{
-    multiSigSafe: BaseContract;
-    entity: MSSafeEntity;
+    multiSigVault: BaseContract;
+    entity: MSVaultEntity;
   }>();
   const handleBack = (): void => setOpenedDebugContract(undefined);
 
@@ -82,8 +82,8 @@ export const MainPageContracts: FC<IMainPageContractsProps> = (props) => {
             <div>
               <ContractDebugHeader contract={openedDebugContract.entity} />
               <GenericContract
-                contractName="MultiSigSafe"
-                contract={openedDebugContract.multiSigSafe}
+                contractName="MultiSigVault"
+                contract={openedDebugContract.multiSigVault}
                 key={openedDebugContract.entity.address}
                 mainnetAdaptor={props.scaffoldAppProviders.mainnetAdaptor}
                 blockExplorer={props.scaffoldAppProviders.targetNetwork.blockExplorer}
@@ -94,15 +94,15 @@ export const MainPageContracts: FC<IMainPageContractsProps> = (props) => {
           {/* LIST */}
           {!openedDebugContract && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              {createdContracts.map((createdContract: MSSafeEntity) => {
-                const multiSigSafeRaw: any | undefined =
+              {createdContracts.map((createdContract: MSVaultEntity) => {
+                const multiSigVaultRaw: any | undefined =
                   abi &&
                   (new BaseContract(createdContract.address, abi, asEthersAdaptor(ethersContext).provider) as any);
-                const multiSigSafe = signer ? multiSigSafeRaw?.connect(signer) : multiSigSafeRaw;
+                const multiSigVault = signer ? multiSigVaultRaw?.connect(signer) : multiSigVaultRaw;
 
                 const handleOpen = (): void =>
                   setOpenedDebugContract({
-                    multiSigSafe,
+                    multiSigVault,
                     entity: createdContract,
                   });
                 return (

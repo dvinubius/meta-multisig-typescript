@@ -18,8 +18,8 @@ export interface ExecutedEventModel {
   dateExecuted: Date;
 }
 
-export const useMultiSigTransactions = (multiSigSafe: any): MultiSigTransactionsResult => {
-  const safeAddress = multiSigSafe.address;
+export const useMultiSigTransactions = (multiSigVault: any): MultiSigTransactionsResult => {
+  const safeAddress = multiSigVault.address;
 
   const [pending, setPending] = useState<MSTransactionModel[]>([]);
   const [executed, setExecuted] = useState<MSTransactionModel[]>([]);

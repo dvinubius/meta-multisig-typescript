@@ -33,7 +33,7 @@ const exportContracts = (contractNames: string[], destination: string): boolean 
 
 function main(): void {
   // add any of your factory-created contracts here
-  const contracts = ['MultiSigSafe'];
+  const contracts = ['MultiSigVault'];
   const success = exportContracts(contracts, destination);
   if (success) {
     console.log(`✅  Exported abi(s) for non-deployed contract(s) ${contracts} to the frontend.`);

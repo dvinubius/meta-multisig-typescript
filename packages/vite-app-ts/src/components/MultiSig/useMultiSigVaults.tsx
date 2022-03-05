@@ -1,23 +1,23 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useMoralis } from 'react-moralis';
-import { MSSafeEntity } from '~~/models/contractFactory/ms-safe-entity.model';
+import { MSVaultEntity } from '~~/models/contractFactory/ms-vault-entity.model';
 import { MSFactory } from '../../generated/contract-types/MSFactory';
 
-export const useMultiSigSafes = (
+export const useMultiSigVaults = (
   factory: MSFactory | undefined,
   owner: string | undefined
-): { loading: boolean; safes: MSSafeEntity[] } => {
+): { loading: boolean; vaults: MSVaultEntity[] } => {
   const [loading, setLoading] = useState(true);
-  const [safes, setSafes] = useState<MSSafeEntity[]>([]);
+  const [vaults, setVaults] = useState<MSVaultEntity[]>([]);
   const { Moralis } = useMoralis();
 
-  const updateSafes = useCallback(
+  const updateVaults = useCallback(
     () => async () => {
-      const safes = await Moralis.Cloud.run('MultiSigSafes', {
+      const vaults = await Moralis.Cloud.run('MultiSigVaults', {
         owner,
       });
-      setSafes((_) =>
-        safes.map((s: any) => ({
+      setVaults((_) =>
+        vaults.map((s: any) => ({
           ...s,
           address: s.contractAddress,
           confirmationsRequired: +s.confirmationsRequired,
@@ -30,28 +30,28 @@ export const useMultiSigSafes = (
 
   // init & update on owner changes
   useEffect(() => {
-    void updateSafes()();
-  }, [updateSafes]);
+    void updateVaults()();
+  }, [updateVaults]);
 
-  // update on safe created events
+  // update on vault created events
   const [factSubscribed, setFactSubscribed] = useState(false);
   useEffect(() => {
     if (!factory || factSubscribed) return;
-    factory?.on('CreateMultiSigSafe', (v) => {
-      void updateSafes()();
+    factory?.on('CreateMultiSigVault', (v) => {
+      void updateVaults()();
     });
     setFactSubscribed(true);
-  }, [factory, factSubscribed, updateSafes]);
+  }, [factory, factSubscribed, updateVaults]);
 
   // update on owner change events
   const [ownersSubscribed, setOwnersSubscribed] = useState(false);
   useEffect(() => {
     if (!factory || ownersSubscribed) return;
     factory?.on('Owners', (v) => {
-      void updateSafes()();
+      void updateVaults()();
     });
     setOwnersSubscribed(true);
-  }, [factory, ownersSubscribed, updateSafes]);
+  }, [factory, ownersSubscribed, updateVaults]);
 
-  return { loading, safes };
+  return { loading, vaults };
 };

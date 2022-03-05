@@ -15,7 +15,7 @@ import {
   softBorder2,
 } from '~~/styles/styles';
 import MSTransactionsSection from './MSTransactionsSection';
-import { MsSafeContext } from './MultiSig';
+import { MsVaultContext } from './MultiSig';
 import Owners from './Owners';
 import Requirements from './Requirements';
 import { TransactionRequest } from '@ethersproject/providers';
@@ -28,7 +28,7 @@ export interface IMultiSigDisplayProps {
 export const MultiSigDisplay: FC<IMultiSigDisplayProps> = (props) => {
   const { ethPrice, tx } = useContext(InnerAppContext);
 
-  const { owners, balance, multiSigSafe } = useContext(MsSafeContext);
+  const { owners, balance, multiSigVault } = useContext(MsVaultContext);
   const { widthAboveMsTxDetailsFit, widthAboveUserStatusDisplayFit } = useContext(LayoutContext);
   const labelStyle = {
     fontSize: '0.875rem',
@@ -110,7 +110,7 @@ export const MultiSigDisplay: FC<IMultiSigDisplayProps> = (props) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-                  <Address fontSize={18} address={multiSigSafe?.address} />
+                  <Address fontSize={18} address={multiSigVault?.address} />
                 </div>
 
                 <div
@@ -123,7 +123,7 @@ export const MultiSigDisplay: FC<IMultiSigDisplayProps> = (props) => {
                     border: softBorder,
                   }}>
                   <QR
-                    value={multiSigSafe ? multiSigSafe.address : ''}
+                    value={multiSigVault ? multiSigVault.address : ''}
                     size={180}
                     level="H"
                     includeMargin

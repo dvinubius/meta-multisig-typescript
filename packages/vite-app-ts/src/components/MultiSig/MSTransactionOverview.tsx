@@ -6,7 +6,7 @@ import { MSTransactionModel } from './models/ms-transaction.model';
 import { contentWrapperStyle, labelStyle } from './MSTransactionStyles';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
 
-import { MsSafeContext } from './MultiSig';
+import { MsVaultContext } from './MultiSig';
 import { DecodedResult } from './DecodedResult';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 
@@ -16,10 +16,10 @@ export interface IMSTransactionOverviewProps {
 }
 
 const MSTransactionOverview: FC<IMSTransactionOverviewProps> = (props) => {
-  const { multiSigSafe } = useContext(MsSafeContext);
+  const { multiSigVault } = useContext(MsVaultContext);
   const scaffoldAppProviders = useScaffoldAppProviders();
   const blockExplorer = scaffoldAppProviders.targetNetwork.blockExplorer;
-  const decodedCalldata = multiSigSafe.interface.parseTransaction({ data: props.transaction.calldata });
+  const decodedCalldata = multiSigVault.interface.parseTransaction({ data: props.transaction.calldata });
 
   const [expanded, setExpanded] = useState(props.isParentExpanded);
 

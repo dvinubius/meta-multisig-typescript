@@ -8,15 +8,15 @@ import UserStatus from '../Shared/UserStatus';
 import { BaseContract } from 'ethers';
 import { asEthersAdaptor } from 'eth-hooks/functions';
 import { useEthersContext } from 'eth-hooks/context';
-import { MSSafeEntity } from '~~/models/contractFactory/ms-safe-entity.model';
+import { MSVaultEntity } from '~~/models/contractFactory/ms-vault-entity.model';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
 import { BigNumber } from '@ethersproject/bignumber';
 import { MSTransactionModel } from './models/ms-transaction.model';
 import { InnerAppContext } from '~~/models/CustomContexts';
 import { MultiSigDisplay } from './MultiSigDisplay';
 
-export const MsSafeContext = createContext<{
-  multiSigSafe?: any;
+export const MsVaultContext = createContext<{
+  multiSigVault?: any;
   owners?: string[];
   confirmationsRequired?: number;
   pending?: MSTransactionModel[];
@@ -25,7 +25,7 @@ export const MsSafeContext = createContext<{
 }>({});
 
 export interface IMultiSigProps {
-  contract: MSSafeEntity | undefined;
+  contract: MSVaultEntity | undefined;
 }
 
 export const MultiSig: FC<IMultiSigProps> = (props) => {
@@ -34,15 +34,15 @@ export const MultiSig: FC<IMultiSigProps> = (props) => {
   const ethersContext = useEthersContext();
   const signer = ethersContext.signer;
   const userAddress = ethersContext.account ?? '';
-  const abi = injectableAbis?.MultiSigSafe;
+  const abi = injectableAbis?.MultiSigVault;
 
-  const multiSigSafeRaw: any | undefined =
+  const multiSigVaultRaw: any | undefined =
     abi &&
     props.contract &&
     (new BaseContract(props.contract.address, abi, asEthersAdaptor(ethersContext).provider) as any);
-  const multiSigSafe = signer ? multiSigSafeRaw?.connect(signer) : multiSigSafeRaw;
+  const multiSigVault = signer ? multiSigVaultRaw?.connect(signer) : multiSigVaultRaw;
 
-  const { pending, executed, initializing: initializingTxs } = useMultiSigTransactions(multiSigSafe);
+  const { pending, executed, initializing: initializingTxs } = useMultiSigTransactions(multiSigVault);
 
   const scaffoldAppProviders = useScaffoldAppProviders();
   const injectedProvider = scaffoldAppProviders.localAdaptor;
@@ -63,7 +63,7 @@ export const MultiSig: FC<IMultiSigProps> = (props) => {
   );
 
   const msSafeContext = {
-    multiSigSafe,
+    multiSigVault,
     owners,
     confirmationsRequired,
     pending,
@@ -73,7 +73,7 @@ export const MultiSig: FC<IMultiSigProps> = (props) => {
 
   const ready =
     !!props.contract &&
-    multiSigSafe &&
+    multiSigVault &&
     !!owners &&
     !!confirmationsRequired &&
     !initializingTxs &&
@@ -81,9 +81,9 @@ export const MultiSig: FC<IMultiSigProps> = (props) => {
     !!executed;
 
   return ready ? (
-    <MsSafeContext.Provider value={msSafeContext}>
+    <MsVaultContext.Provider value={msSafeContext}>
       <MultiSigDisplay userStatusDisplay={userStatusDisplay} />
-    </MsSafeContext.Provider>
+    </MsVaultContext.Provider>
   ) : (
     <div style={{ margin: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '30vh' }}>
       <Spin size="large" />

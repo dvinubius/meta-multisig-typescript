@@ -6,7 +6,7 @@ import { AddressInput, Blockie, EtherInput } from '~~/eth-components/ant';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
 
 import './CreateMsTx.css';
-import { MsSafeContext } from './MultiSig';
+import { MsVaultContext } from './MultiSig';
 
 import { BigNumber, BytesLike, ethers } from 'ethers';
 import { useContractReader } from 'eth-hooks';
@@ -29,7 +29,7 @@ const { Option } = Select;
 const CreateMetaTx: FC = () => {
   const { Moralis } = useMoralis();
 
-  const { multiSigSafe, confirmationsRequired: requiredSigners } = useContext(MsSafeContext);
+  const { multiSigVault, confirmationsRequired: requiredSigners } = useContext(MsVaultContext);
   const { ethPrice } = useContext(InnerAppContext);
   const scaffoldAppProviders = useScaffoldAppProviders();
   const ethersContext = useEthersContext();
@@ -100,7 +100,7 @@ const CreateMetaTx: FC = () => {
     const encodecode = () => {
       try {
         const calldata = createCalldata();
-        const decoded = multiSigSafe.interface.parseTransaction({ data: calldata }) as DecodedCalldata;
+        const decoded = multiSigVault.interface.parseTransaction({ data: calldata }) as DecodedCalldata;
         console.log('calldata: ', calldata);
         console.log('decodedDataObject: ', decoded);
         setDecodedDataObject(decoded);
@@ -128,13 +128,13 @@ const CreateMetaTx: FC = () => {
     switch (methodName) {
       case 'transferFunds':
         const amountStr = parseFloat(amount).toFixed(12).toString();
-        return multiSigSafe.interface.encodeFunctionData('transferFunds', [to, parseEther(amountStr)]);
+        return multiSigVault.interface.encodeFunctionData('transferFunds', [to, parseEther(amountStr)]);
 
       case 'addSigner':
       case 'removeSigner':
         const requiredSignersDiff = updateRequiredSigners ? (methodName === 'addSigner' ? 1 : -1) : 0;
         const newNumberOfSigners = (requiredSigners ?? 0) + requiredSignersDiff;
-        return multiSigSafe.interface.encodeFunctionData(methodName, [signerForOp, newNumberOfSigners]);
+        return multiSigVault.interface.encodeFunctionData(methodName, [signerForOp, newNumberOfSigners]);
 
       default:
         throw 'Methodname not recognized';
@@ -176,17 +176,17 @@ const CreateMetaTx: FC = () => {
     if (calldata === '0x') {
       return;
     }
-    const txHash = (await multiSigSafe.getTransactionHash(calldata)) as string;
+    const txHash = (await multiSigVault.getTransactionHash(calldata)) as string;
     console.log('txHash', txHash);
 
     // need to get signer as workaround for a bug in @web3-react after metamask account changes.
     const signature = await (await getCurrentSigner()).signMessage(ethers.utils.arrayify(txHash));
     console.log('signature', signature);
 
-    const recover = await multiSigSafe.recover(txHash, signature);
+    const recover = await multiSigVault.recover(txHash, signature);
     console.log('recover', recover);
 
-    const isOwner = await multiSigSafe.isOwner(recover);
+    const isOwner = await multiSigVault.isOwner(recover);
     console.log('isOwner', isOwner);
 
     if (isOwner) {
@@ -196,7 +196,7 @@ const CreateMetaTx: FC = () => {
 
       metaTx.set('txName', txName);
       metaTx.set('creator', recover);
-      metaTx.set('safeAddress', multiSigSafe.address);
+      metaTx.set('safeAddress', multiSigVault.address);
       metaTx.set('signatures', [signature]);
       metaTx.set('signers', [recover]);
       metaTx.set('txHash', txHash);

@@ -1,6 +1,6 @@
-Moralis.Cloud.define('MultiSigSafes', async (request) => {
+Moralis.Cloud.define('MultiSigVaults', async (request) => {
   const { owner } = request.params;
-  const queryCreated = new Parse.Query('SafeCreated');
+  const queryCreated = new Parse.Query('VaultCreated');
   queryCreated.descending('createdAt');
   const res = await queryCreated.find();
 

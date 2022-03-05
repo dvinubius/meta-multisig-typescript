@@ -1,11 +1,11 @@
 import { InjectableAbis } from '~~/generated/injectable-abis/injectable-abis.type';
-import { MSSafeEntity } from '~~/models/contractFactory/ms-safe-entity.model';
+import { MSVaultEntity } from '~~/models/contractFactory/ms-vault-entity.model';
 import { TTransactorFunc } from '../eth-components/functions';
 import { createContext } from 'react';
 
 export interface InnerAppContext {
   injectableAbis?: InjectableAbis;
-  createdContracts?: MSSafeEntity[];
+  createdContracts?: MSVaultEntity[];
   numCreatedContracts?: number;
   ethPrice?: number;
   gasPrice?: number;
